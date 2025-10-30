@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../App Data/App_data.dart';
+import 'AuthData.dart';
+import 'package:flutter/cupertino.dart';
+
+
 
 class BlinqPulseHome extends StatefulWidget {
   @override
@@ -8,7 +12,7 @@ class BlinqPulseHome extends StatefulWidget {
 
 }
 
-class _BlinqPulseHomeState extends State<BlinqPulseHome> {
+class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
   bool isLive = true;
   Timer? _statusRefreshTimer;
 
@@ -19,7 +23,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
         "loading": true},
       {"name": "Merchant Portal","up": "dowm" ,
         "loading": true},
-      {"name": "Market Place IPG", "up": "dowm" ,
+      {"name": "IPG Portal", "up": "dowm" ,
         "loading": true},
       {"name": "Utility Portal", "up": "dowm" ,
         "loading": true},
@@ -42,10 +46,10 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
       },
     ],
     "Alerts_Live":[
-    {"name":"whatsapp","ok":"down"},
-    {"name":"sms","ok":"down"},
-    {"name":"email","ok":"down"},
-    {"name":"pushnotification","ok":"down"}
+    {"name":"Whatsapp","ok":"down"},
+    {"name":"SMS","ok":"down"},
+    {"name":"Email","ok":"down"},
+    {"name":"Push Notification","ok":"down"}
   ],
   };
   final Map<String, String> sectionTitles = {
@@ -64,7 +68,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
         "loading": true},
       {"name": "Merchant Portal","up": "dowm" ,
         "loading": true},
-      {"name": "Market Place IPG", "up": "dowm" ,
+      {"name": "IPG Portal", "up": "dowm" ,
         "loading": true},
       {"name": "Utility Portal", "up": "dowm" ,
         "loading": true},
@@ -87,10 +91,10 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
       },
     ],
     "Alerts_Staging":[
-      {"name":"whatsapp","ok":"down"},
-      {"name":"sms","ok":"down"},
-      {"name":"email","ok":"down"},
-      {"name":"pushnotification","ok":"down"}
+      {"name":"Whatsapp","ok":"down"},
+      {"name":"SMS","ok":"down"},
+      {"name":"Email","ok":"down"},
+      {"name":"Push Notification","ok":"down"}
     ],
   };
 
@@ -159,36 +163,42 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
 
 
   Future<void> CallDomainStatus_live() async {
-    CallDomainStatus("https://admin.blinq.pk:444/health/admin/portal/status", "Admin Portal","Live");
-    CallDomainStatus("https://merchant.blinq.pk/health/merchant/portal/status", "Merchant Portal","Live");
-    CallDomainStatus("https://ipg.blinq.pk//health/ipg/portal/status", "Market Place IPG","Live");
-    CallDomainStatus("https://tcsapp.blinq.pk/health/utility/portal/status", "Utility Portal","Live");
+
+    CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=AdminPortalLive", "Admin Portal","Live");
+    CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=MerchantPortalLive", "Merchant Portal","Live");
+    CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=IpgPortalLive", "IPG Portal","Live");
+    CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=UtilityPortalLive", "Utility Portal","Live");
   }
 
 
   Future<void> CallDomainStatus_staging() async {
-    CallDomainStatus("https://staging-admin.blinq.pk/health/admin/portal/status", "Admin Portal","Staging");
-    CallDomainStatus("https://staging-merchant.blinq.pk/health/merchant/portal/status", "Merchant Portal","Staging");
-    CallDomainStatus("https://staging-ipg.blinq.pk//health/ipg/portal/status", "Market Place IPG","Staging");
-    CallDomainStatus("https://staging-tcsapp.blinq.pk/health/utility/portal/status", "Utility Portal","Staging");
-
+  CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=AdminPortalStaging", "Admin Portal","Staging");
+    CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=IpgPortalStaging", "IPG Portal","Staging");
+     CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=MerchantPortalStaging", "Merchant Portal","Staging");
+     CallDomainStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=UtilityPortalStaging", "Utility Portal","Staging");
   }
 
   Future<void> CallApiHealthStatus_live() async {
-    CallApiHealthStatus("https://api.blinq.pk/api/blinq/health/merchantapi", "Merchant Api","Live");
-    CallApiHealthStatus("https://payments.blinq.pk/api/blinq/health/paymentapi", "Payment Api","Live");
-    CallApiHealthStatus("https://mobileapi.blinq.pk/api/blinq/health/mobileapi", "Mobile Api","Live");
+    CallApiHealthStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=MerchantApilive", "Merchant Api","Live");
+     CallApiHealthStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=PaymentApilive", "Payment Api","Live");
+     CallApiHealthStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=MobileApiLive", "Mobile Api","Live");
   }
   Future<void> CallApiHealthStatus_Staging() async {
-    CallApiHealthStatus("https://staging-api.blinq.pk/api/blinq/health/merchantapi", "Merchant Api","Staging");
-    CallApiHealthStatus("https://staging-payments.blinq.pk/api/blinq/health/paymentapi", "Payment Api","Staging");
-    CallApiHealthStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/mobileapi", "Mobile Api","Staging");
+   CallApiHealthStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=MerchantApiStaging", "Merchant Api","Staging");
+   CallApiHealthStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=PaymentApiStaging", "Payment Api","Staging");
+   CallApiHealthStatus("https://pulseapi.blinq.pk/api/blinq/healthcheck/status?reqname=MobileApiStaging ", "Mobile Api","Staging");
   }
   Future<void> CallAlertsStatus_live() async {
-    callAltertsStatus("https://mobileapi.blinq.pk/api/blinq/health/whatsapp/stats","whatsapp","Live","15min");
+    callAltertsStatus("https://mobileapi.blinq.pk/api/blinq/health/whatsapp/stats","Whatsapp","Live","15min");
+    callAltertsStatus("https://mobileapi.blinq.pk/api/blinq/health/sms/stats","SMS","Live","15min");
+    callAltertsStatus("https://mobileapi.blinq.pk/api/blinq/health/email/stats","Email","Live","15min");
+    callAltertsStatus("https://mobileapi.blinq.pk/api/blinq/health/pushnotification/stats","Push Notification","Live","15min");
   }
   Future<void> CallAlertsStatus_Staging() async {
-    callAltertsStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/whatsapp/stats","whatsapp","Staging","15min");
+    callAltertsStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/whatsapp/stats","Whatsapp","Staging","15min");
+    callAltertsStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/sms/stats","SMS","Staging","15min");
+    callAltertsStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/email/stats","Email","Staging","15min");
+    callAltertsStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/pushnotification/stats","Push Notification","Staging","15min");
   }
 
   Future<void> callDBHealthStatus(String db_url, String serviceName,enviorment) async {
@@ -210,9 +220,20 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
       setState(() {});
     }
 
-    final status = await AppData.checkDatabaseHealth(db_url);
-
+    final status = await AuthData.checkDatabaseHealth(db_url);
+    bool apiStatusUp = true;
+    bool dbStatusUp = true;
     setState(() {
+      if (portalServices != null) {
+        for (var portal in portalServices) {
+          if (portal["name"] == serviceName) {
+            portal["apiUp"] = apiStatusUp ? "up" : "down";
+            portal["dbUp"] = (status != null && status) ? "up" : "down";
+            portal["loading"] = false;
+          }
+        }
+      }
+
       if (portalServices != null) {
         for (var db in portalServices) {
           if (db["name"] == serviceName) {
@@ -223,35 +244,70 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
       }
     });
   }
+  Future<void> CallDomainStatus(String domainUrl, String serviceName, enviorment) async {
+    List<dynamic>? portalServices;
 
-/*
-  Future<void> callDBHealthStatus_Staging(String env, String serviceName) async {
-    final dbServices = serviceStatusStaging["Database_Staging"];
-    if (dbServices != null) {
-      for (var db in dbServices) {
-        if (db["name"] == serviceName) {
-          db["loading"] = true;
+    if (enviorment == "Staging") {
+      portalServices = serviceStatusStaging["Portal_Staging"];
+    } else if (enviorment == "Live") {
+      portalServices = serviceStatusLive["Portal_Live"];
+    }
+
+    // Set loading true
+    if (portalServices != null) {
+      for (var portal in portalServices) {
+        if (portal["name"] == serviceName) {
+          portal["loading"] = true;
         }
       }
       setState(() {});
     }
 
-    final status = await AppData.checkDatabaseHealth(env);
+    final domainStatusList = await AuthData.checkDomainStatus(domainUrl);
 
-    setState(() {
-      if (dbServices != null) {
-        for (var db in dbServices) {
-          if (db["name"] == serviceName) {
-            db["connected"] = (status != null && status) ? "connected" : "disconnected";
-            db["loading"] = false;
+    if (domainStatusList != null) {
+      final List<String> apiComponents = ["Utility Portal", "IPG Portal", "Merchant Portal", "Admin Portal"];
+      final List<String> dbComponents = ["Blinq Database", "Mobile Database"];
+      bool apiStatusUp = true;
+      bool dbStatusUp = true;
+
+
+      if (domainStatusList.isEmpty ||
+          (domainStatusList.length == 1 && domainStatusList.first['status'] == 'DOWN')) {
+        apiStatusUp = false;
+        dbStatusUp = false;
+      } else {
+        for (var item in domainStatusList) {
+          final component = item['component'] ?? 'Unknown';
+          final status = item['status']?.toString().toUpperCase() ?? 'UNKNOWN';
+          print("Component: $component | Status: $status");
+
+          if (apiComponents.contains(component)) {
+            if (status != "UP") apiStatusUp = false;
+          }
+          if (dbComponents.contains(component)) {
+            if (status != "UP") dbStatusUp = false;
           }
         }
       }
-    });
-  }
-*/
 
-  Future<void> CallDomainStatus(String domainUrl, String serviceName,enviorment) async {
+      // Update the portal service
+      if (portalServices != null) {
+        for (var portal in portalServices) {
+          if (portal["name"] == serviceName) {
+            portal["apiUp"] = apiStatusUp ? "up" : "down";
+            portal["dbUp"] = dbStatusUp ? "up" : "down";
+            portal["loading"] = false;
+          }
+        }
+      }
+
+      setState(() {});
+    }
+  }
+
+
+ /* Future<void> CallDomainStatus(String domainUrl, String serviceName,enviorment) async {
     List<dynamic>? portalServices;
     if (enviorment == "Staging") {
       portalServices = serviceStatusStaging["Portal_Staging"];
@@ -269,53 +325,48 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
       setState(() {});
     }
 
-    final domainStatusList = await AppData.checkDomainStatus(domainUrl);
+    final domainStatusList = await AuthData.checkDomainStatus(domainUrl);
 
     if (domainStatusList != null) {
-      bool allUp = true;
+
+      final List<String> apiComponents = ["Utility Portal","IPG Portal","Merchant Portal","Admin Portal"];
+      final List<String> dbComponents = ["Blinq Database", "Mobile Database"];
+      bool apiStatusUp = true;
+      bool dbStatusUp = true;
       for (var item in domainStatusList) {
         final component = item['component'] ?? 'Unknown';
         final status = item['status']?.toString().toUpperCase() ?? 'UNKNOWN';
         print("Component: $component | Status: $status");
-        if (status != "UP") {
-          allUp = false; // If any component is not UP, set false
+        if (apiComponents.contains(component)) {
+          if (status != "UP") apiStatusUp = false;
+        }
+        if (dbComponents.contains(component)) {
+          if (status != "UP") dbStatusUp = false;
         }
       }
       if (portalServices != null) {
         for (var portal in portalServices) {
           if (portal["name"] == serviceName) {
-            portal["up"] = allUp ? "up" : "down";
+            portal["apiUp"] = apiStatusUp ? "up" : "down";
+            portal["dbUp"] = dbStatusUp ? "up" : "down";
             portal["loading"] = false;
           }
         }
       }
+      setState(() {});
 
-      setState(() {});
-    } else {
-      if (portalServices != null) {
-        for (var portal in portalServices) {
-          if (portal["name"] == serviceName) {
-            portal["up"] = "down";
-            portal["loading"] = false;
-          }
-        }
-      }
-      setState(() {});
     }
   }
-
+*/
   Future<void> CallApiHealthStatus(
       String domainUrl, String serviceName, String enviorment) async {
-
     List<dynamic>? portalServices;
-
     if (enviorment == "Staging") {
       portalServices = serviceStatusStaging["API_Staging"];
     }
     else if (enviorment == "Live") {
       portalServices = serviceStatusLive["API_Live"];
     }
-
     if (portalServices != null) {
       for (var portal in portalServices) {
         if (portal["name"] == serviceName) {
@@ -325,108 +376,94 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
       setState(() {});
     }
 
-    final domainStatusList = await AppData.getApiHealth(domainUrl,enviorment,serviceName);
+    final domainStatusList = await AuthData.checkDomainStatus(domainUrl);
 
     if (domainStatusList != null) {
-      bool allUp = true;
-      for (var item in domainStatusList) {
-        final component = item['component'] ?? 'Unknown';
-        final status = item['status']?.toString().toUpperCase() ?? 'UNKNOWN';
-        print("Component: $component | Status: $status");
-        if (status != "UP") {
-          allUp = false; // If any component is not UP, set false
-        }
-      }
-      if (portalServices != null) {
-        for (var portal in portalServices) {
-          if (portal["name"] == serviceName) {
-            portal["up"] = allUp ? "up" : "down";
-            portal["loading"] = false;
+
+        final List<String> apiComponents = ["Mobile API","Payment Api","Merchant Api"];
+        final List<String> dbComponents = ["Blinq Database", "Mobile Database"];
+        bool apiStatusUp = true;
+        bool dbStatusUp = true;
+        for (var item in domainStatusList) {
+          final component = item['component'] ?? 'Unknown';
+          final status = item['status']?.toString().toUpperCase() ?? 'UNKNOWN';
+          print("Component: $component | Status: $status");
+          if (apiComponents.contains(component)) {
+            if (status != "UP") apiStatusUp = false;
+          }
+          if (dbComponents.contains(component)) {
+            if (status != "UP") dbStatusUp = false;
           }
         }
-      }
-
-      else {
         if (portalServices != null) {
           for (var portal in portalServices) {
             if (portal["name"] == serviceName) {
-              portal["up"] = "down";
+              portal["apiUp"] = apiStatusUp ? "up" : "down";
+              portal["dbUp"] = dbStatusUp ? "up" : "down";
               portal["loading"] = false;
             }
           }
         }
-      }
-    }
+        setState(() {});
 
-    setState(() {});
+    }
   }
   Future<void> callAltertsStatus(
-      String domainUrl, String serviceName, String enviorment, String duration) async {
-
+      String domainUrl,
+      String serviceName,
+      String enviorment,
+      String duration,
+      ) async {
     List<dynamic>? portalServices;
-
-    // Pick correct environment service list
     if (enviorment == "Staging") {
       portalServices = serviceStatusStaging["Alerts_Staging"];
     } else if (enviorment == "Live") {
       portalServices = serviceStatusLive["Alerts_Live"];
     }
 
-    // Mark service as loading in UI
     if (portalServices != null) {
       for (var portal in portalServices) {
         if (portal["name"] == serviceName) {
           portal["loading"] = true;
+          portal["details"] = null; // clear old data
         }
       }
       setState(() {});
     }
 
-    // Call API
-    final alertsData = await AppData.getAlerts(domainUrl, duration,enviorment);
-    bool allUp = true;
+    final domainStatusList = await AuthData.getAlerts(domainUrl, duration, enviorment);
+    final dataList = domainStatusList?["data"];
+   if (dataList is List && dataList.isNotEmpty) {
+      final item = dataList[0]; // or [1] if you want the second
+      final status = item['Whatsapp-Service-Status']?.toString().toUpperCase() ?? "UNKNOWN";
+      bool serviceUp = status == "OK";
+      print("Service is up? $serviceUp");
 
-    if (alertsData != null) {
-       if (alertsData is Map<String, dynamic>) {
-        alertsData.forEach((key, value) {
-          print("$key: $value");
-        });
 
-        final serviceStatus = alertsData["Whatsapp-Service-Status"]
-            ?.toString()
-            .toUpperCase();
-        if (serviceStatus != "OK") {
-          allUp = false;
-        }
-      }
-    } else {
-      // If no data returned
-      allUp = false;
-      print("alertsData is null — marking as DOWN");
-    }
-
-    // Update UI
     if (portalServices != null) {
-      for (var portal in portalServices) {
-        if (portal["name"] == serviceName) {
-          portal["up"] = allUp ? "up" : "down";
-          portal["loading"] = false;
+        for (var portal in portalServices) {
+          if (portal["name"] == serviceName) {
+            portal["dbUp"] = "1";
+            portal["apiUp"] = serviceUp ? "up" : "down";
+            portal["loading"] = false;
+            portal["details"] = item;
+          }
         }
       }
+      setState(() {});
     }
-
-    setState(() {});
   }
+
 
 
   @override
   Widget build(BuildContext context) {
-    final serviceStatus = isLive ? serviceStatusLive : serviceStatusStaging;
-    final liveHasIssue = hasDownService(serviceStatusLive);
-    final stagingHasIssue = hasDownService(serviceStatusStaging);
+      final serviceStatus = isLive ? serviceStatusLive : serviceStatusStaging;
+      final liveHasIssue = hasDownService(serviceStatusLive);
+      final stagingHasIssue = hasDownService(serviceStatusStaging);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
+      return Scaffold(
+        backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -546,85 +583,95 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 2.5, // adjust height/width
+                            childAspectRatio: 2.5,
                           ),
-                          itemBuilder: (context, index) {
-                            final service = entry.value[index];
-                            final name = service['name'];
-                            final statusRaw = service['connected'] ?? service['up'] ?? '';
-                            final status = statusRaw.toString().toLowerCase();
-                            final isHealthy = status == 'up' || status == 'connected';
-                            final isLoading = service['loading'] == true;
+                            itemBuilder: (context, index) {
+                              final service = entry.value[index];
+                              final name = service['name'];
 
-                            return Card(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              elevation: 6,
-                              shadowColor: Colors.grey.shade400,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
+                              // Get the API/DB status from your portalServices
+                              final apiStatus = service['apiUp']?.toString().toLowerCase();
+                              final dbStatus = service['dbUp']?.toString().toLowerCase();
+                              final isLoading = service['loading'] == true;
+
+                              // final apiUp = apiStatus == 'up';
+                              final dbUp = dbStatus == 'up' || dbStatus == '1';
+                              final apiUp = apiStatus == 'up' || dbStatus == '1';
+
+
+                              return InkWell(
+                                onTap: () {
+                                  final details = service['details'];
+                                  showDialog(
+
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(16),
                                         ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    isLoading
-                                        ? SizedBox(
-                                      height: 18,
-                                      width: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                            Colors.orange.shade700),
-                                      ),
-                                    )
-                                        : Row(
-                                      children: [
-                                       /* Text(
-                                         *//* isHealthy ? "UP" : "DOWN",*//*
-                                          style: TextStyle(
-                                            color: isHealthy ? Colors.green : Colors.red,
-                                            fontWeight: FontWeight.bold,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                // Title
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      name,
+                                                      style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    // Orange close button
+                                                    IconButton(
+                                                      icon: const Icon(Icons.close, color: Colors.orange),
+                                                      onPressed: () => Navigator.pop(context),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Container(
+                                                  height: 2,
+                                                  width: double.infinity,
+                                                  color: Colors.orange,
+                                                ),
+
+                                                const SizedBox(height: 12),
+                                                // Details Section
+                                                if (details != null) ...[
+                                                  const Text(
+                                                    "Details:",
+                                                    style: TextStyle(fontWeight: FontWeight.w600),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  ...details.entries.map(
+                                                        (e) => Padding(
+                                                      padding: const EdgeInsets.only(bottom: 4.0),
+                                                      child: Text("${e.key}: ${e.value}"),
+                                                    ),
+                                                  ),
+                                                ] else
+                                                  const Text(
+                                                    "No extra information found.",
+                                                    style: TextStyle(color: Colors.grey),
+                                                  ),
+                                              ],
+                                            ),
                                           ),
-                                        ),*/
-                                        const SizedBox(width: 4),
-                                        Icon(
-                                          isHealthy
-                                              ? Icons.check_circle_outline
-                                              : Icons.error_outline,
-                                          size: 18,
-                                          color: isHealthy ? Colors.green : Colors.red,
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                                      );
+                                    },
+                                  );
+                                },
 
-                        /*  Column(
-                          children: entry.value.map((service) {
-                            final name = service['name'];
-                            final statusRaw = service['connected'] ?? service['up'] ?? '';
-                            final status = statusRaw.toString().toLowerCase();
-                            final isHealthy = status == 'up' || status == 'connected';
-                            final isLoading = service['loading'] == true;
-
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: Card(
+                                child:Card(
                                 color: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
@@ -632,59 +679,79 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome> {
                                 elevation: 6,
                                 shadowColor: Colors.grey.shade400,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                   child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16,
+                                      Flexible(
+                                        child: Text(
+                                          name,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      isLoading
-                                          ? SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                          AlwaysStoppedAnimation<Color>(
-                                              Colors.orange.shade700),
+
+                                      if (isLoading)
+                                        SizedBox(
+                                          height: 18,
+                                          width: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                            AlwaysStoppedAnimation<Color>(Colors.orange.shade700),
+                                          ),
+                                        )
+                                      else
+                                        Row(
+                                          children: [
+                                            if (apiUp && dbUp)
+                                              ...[
+                                                Icon(Icons.cloud_off, size: 20, color: Colors.green),
+                                                const SizedBox(width: 4),
+                                                Icon(Icons.storage_rounded, size: 20, color: Colors.green),
+                                              ],
+
+                                            if (!apiUp && dbUp)...[
+                                              Icon(Icons.cloud_off, size: 20, color: Colors.red),
+                                            const SizedBox(width: 4),
+                                            Icon(Icons.storage_rounded, size: 20, color: Colors.green),
+],
+                                            if (apiUp && !dbUp)...[
+                                              Icon(Icons.cloud_off, size: 20, color: Colors.green),
+                                              const SizedBox(width: 4),
+                                              Icon(Icons.storage_rounded, size: 20, color: Colors.red),
+                                            ],
+
+                                            if (!apiUp && !dbUp) ...[
+                                              Icon(Icons.cloud_off, size: 20, color: Colors.red),
+                                              const SizedBox(width: 4),
+                                              Icon(Icons.storage_rounded, size: 20, color: Colors.red),
+                                            ],
+                                            if (apiUp=="1" && dbUp) ...[
+                                              Icon(Icons.storage_rounded, size: 20, color: Colors.green),
+                                            ],
+                               if (apiUp=="1" && !dbUp) ...[
+                                              Icon(Icons.storage_rounded, size: 20, color: Colors.red),
+                                            ],
+                                            if (apiUp && dbUp=="1") ...[
+                                              Icon(Icons.cloud_off, size: 20, color: Colors.green),
+                                            ],
+                               if (!apiUp && dbUp=="1") ...[
+                                              Icon(Icons.cloud_off, size: 20, color: Colors.red),
+                                            ],
+                                          ],
                                         ),
-                                      )
-                                          : Row(
-                                        children: [
-                                          Text(
-                                            isHealthy ? "UP" : "DOWN",
-                                            style: TextStyle(
-                                              color: isHealthy
-                                                  ? Colors.green
-                                                  : Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Icon(
-                                            isHealthy
-                                                ? Icons.check_circle_outline
-                                                : Icons.error_outline,
-                                            color: isHealthy
-                                                ? Colors.green
-                                                : Colors.red,
-                                          ),
-                                        ],
-                                      ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        ),*/
+                                  ),
+                              );
+                            }
+
+                        ),
                         const SizedBox(height: 16),
                       ],
                     );
