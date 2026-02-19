@@ -1,0 +1,38 @@
+# Flutter & Dart
+.dart_tool/
+.build/
+.flutter-plugins/
+.flutter-plugins-dependencies/
+pubspec.lock
+.idea/
+
+# Android build output
+android/.cxx/
+android/app/build/
+
+# iOS & macOS build
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+macos/Flutter/Flutter.framework
+macos/Flutter/Flutter.podspec
+
+# General build output
+build/
+**/build/
+**/intermediates/
+**/outputs/
+
+# Native binaries
+*.so
+*.apk
+*.aab
+*.zip
+*.ipa
+
+# # Firebase & secrets
+google-services.json
+*.jks
+*.keystore
+
+# Ignore Flutter engine binary
+**/libflutter.so
