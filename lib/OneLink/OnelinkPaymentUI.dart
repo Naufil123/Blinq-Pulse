@@ -27,7 +27,7 @@ class OneLinkPaymentUI extends StatefulWidget {
 
 class _OneLinkUIState extends State<OneLinkPaymentUI> {
   final Set<int> _expandedIndexes = {};
-  final List<String> timerOptions = ['15min', '1hour', '24hours', '48hours'];
+  final List<String> timerOptions = ['15min', '1hours','3hours', '24hours', '48hours'];
   String selectedTimer = '15min';
 
   List<dynamic> _oneLinkData = [];
@@ -470,7 +470,7 @@ class _OneLinkUIState extends State<OneLinkPaymentUI> {
       color: Colors.black54, // semi-transparent overlay
       child: const Center(
         child: CircularProgressIndicator(
-          color: Colors.orange,
+          color: Colors.red,
         ),
       ),
     ),

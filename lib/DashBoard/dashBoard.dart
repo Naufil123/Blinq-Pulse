@@ -4,17 +4,11 @@ import 'package:flutter/material.dart';
 import '../OneLink/OneLinkInquiryUI.dart';
 import 'AuthData.dart';
 import 'package:flutter/cupertino.dart';
-
 import '../OneLink/OnelinkPaymentUI.dart';
-
-
-
 class BlinqPulseHome extends StatefulWidget {
   @override
   _BlinqPulseHomeState createState() => _BlinqPulseHomeState();
-
 }
-
 class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
   bool isLive = true;
   Timer? _statusRefreshTimer;
@@ -103,7 +97,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
       {"name":"Push Notification","ok":"down"}
     ],
   };
-
   bool hasDownService(Map<String, List<Map<String, dynamic>>> envStatus) {
     for (var category in envStatus.values) {
       for (var service in category) {
@@ -120,7 +113,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
     return false;
   }
 
-
   List<String> inquiryStatuses = [];
   List<String> paymentStatuses = [];
 
@@ -130,11 +122,9 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
         AuthData.OnelinkInquiryAPiLink,
         selectedTimer,
       );
-
       if (inquiryRawData == null || inquiryRawData is! List || inquiryRawData.isEmpty) {
         throw Exception('Invalid OneLink Inquiry API response');
       }
-
       inquiryStatuses = []; // clear old data
       for (var item in inquiryRawData) {
         if (item is Map) {
@@ -143,17 +133,14 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
           inquiryStatuses.add(status);
         }
       }
-
       debugPrint('Inquiry Statuses: $inquiryStatuses');
       final dynamic paymentRawData = await AuthData.fetchOneLinkPaymentHealth(
           AuthData.OnelinkPaymentAPiLink,
         selectedTimer,
       );
-
       if (paymentRawData == null || paymentRawData is! List || paymentRawData.isEmpty) {
         throw Exception('Invalid OneLink Payment API response');
       }
-
       paymentStatuses = [];
       for (var item in paymentRawData) {
         if (item is Map) {
@@ -162,34 +149,25 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
           paymentStatuses.add(status);
         }
       }
-
       debugPrint('Payment Statuses: $paymentStatuses');
-
-
       setState(() {});
-
     } catch (e) {
       debugPrint('Error fetching OneLink statuses: $e');
     }
   }
   Color getStatusColor(List<String> statuses) {
     if (statuses.isEmpty) return Colors.grey;
-
     final normalized =
     statuses.map((s) => s.trim().toUpperCase()).toList();
-
     if (normalized.contains('FAILURE')) {
       return Colors.red; // highest priority
     }
-
     if (normalized.contains('WARNING')) {
       return Colors.yellow;
     }
-
     if (normalized.every((s) => s == 'SUCCESS')) {
       return Colors.green;
     }
-
     return Colors.grey; // fallback
   }
 
@@ -285,7 +263,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
     callAltertsStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/email/stats","Email","Staging",selectedTimer);
     callAltertsStatus("https://staging-mobileapi.blinq.pk/api/blinq/health/pushnotification/stats","Push Notification","Staging",selectedTimer);
   }
-  // String OnelinkApiLink='https://pulseapi.blinq.pk/api/blinq/health/onelink-payment';
+
   bool isOneLinkLoading = false;
 
   Future<void> callDBHealthStatus(String db_url, String serviceName,enviorment) async {
@@ -331,80 +309,15 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
       }
     });
   }
-  /*Future<void> CallDomainStatus(String domainUrl, String serviceName, enviorment) async {
-    List<dynamic>? portalServices;
-
-    if (enviorment == "Staging") {
-      portalServices = serviceStatusStaging["Portal_Staging"];
-    } else if (enviorment == "Live") {
-      portalServices = serviceStatusLive["Portal_Live"];
-    }
-
-    // Set loading true
-    if (portalServices != null) {
-      for (var portal in portalServices) {
-        if (portal["name"] == serviceName) {
-          portal["loading"] = true;
-        }
-      }
-      setState(() {});
-    }
-
-    final domainStatusList = await AuthData.checkDomainStatus(domainUrl);
-
-    if (domainStatusList != null) {
-      final List<String> apiComponents = ["Utility Portal", "IPG Portal", "Merchant Portal", "Admin Portal"];
-      final List<String> dbComponents = ["Blinq Database", "Mobile Database"];
-      bool apiStatusUp = true;
-      bool dbStatusUp = true;
-
-
-      if (domainStatusList.isEmpty ||
-          (domainStatusList.length == 1 && domainStatusList.first['status'] == 'DOWN')) {
-        apiStatusUp = false;
-        dbStatusUp = false;
-      } else {
-        for (var item in domainStatusList) {
-          final component = item['component'] ?? 'Unknown';
-          final status = item['status']?.toString().toUpperCase() ?? 'UNKNOWN';
-          print("Component: $component | Status: $status");
-
-          if (apiComponents.contains(component)) {
-            if (status != "UP") apiStatusUp = false;
-          }
-          if (dbComponents.contains(component)) {
-            if (status != "UP") dbStatusUp = false;
-          }
-        }
-      }
-
-      // Update the portal service
-      if (portalServices != null) {
-        for (var portal in portalServices) {
-          if (portal["name"] == serviceName) {
-            portal["apiUp"] = apiStatusUp ? "up" : "down";
-            portal["dbUp"] = dbStatusUp ? "up" : "down";
-            portal["loading"] = false;
-            portal["details"] = data;
-          }
-        }
-      }
-
-      setState(() {});
-    }
-  }*/
 
   Future<void> CallDomainStatus(
       String domainUrl, String serviceName, String enviorment,String domainUrlInfo ) async {
-
     List<dynamic>? portalServices;
-
     if (enviorment == "Staging") {
       portalServices = serviceStatusStaging["Portal_Staging"];
     } else if (enviorment == "Live") {
       portalServices = serviceStatusLive["Portal_Live"];
     }
-
     if (portalServices != null) {
       for (var portal in portalServices) {
         if (portal["name"] == serviceName) {
@@ -415,10 +328,8 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
     }
     final domainStatusList =
     await AuthData.checkDomainStatus(domainUrl);
-
     bool apiStatusUp = true;
     bool dbStatusUp = true;
-
     if (domainStatusList == null || domainStatusList.isEmpty) {
       apiStatusUp = false;
       dbStatusUp = false;
@@ -439,29 +350,23 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
           portal["apiUp"] = apiStatusUp ? "up" : "down";
           portal["dbUp"] = dbStatusUp ? "up" : "down";
           portal["loading"] = false;
-
           portal["details"] = detailsData;
         }
       }
     }
-
     setState(() {});
   }
-
   Future<void> CallApiHealthStatus(
       String domainUrl,
       String serviceName,
       String enviorment,
       String domainUrlInfo) async {
-
     List<dynamic>? portalServices;
-
     if (enviorment == "Staging") {
       portalServices = serviceStatusStaging["API_Staging"];
     } else if (enviorment == "Live") {
       portalServices = serviceStatusLive["API_Live"];
     }
-
     if (portalServices != null) {
       for (var portal in portalServices) {
         if (portal["name"] == serviceName) {
@@ -473,9 +378,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
     }
     final domainStatusList =
     await AuthData.checkDomainStatus(domainUrl);
-
     if (domainStatusList != null) {
-
       final List<String> apiComponents = [
         "Mobile API",
         "Payment Api",
@@ -485,26 +388,21 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
         "Blinq Database",
         "Mobile Database"
       ];
-
       bool apiStatusUp = true;
       bool dbStatusUp = true;
-
       for (var item in domainStatusList) {
         final component = item['component'] ?? 'Unknown';
         final status =
             item['status']?.toString().toUpperCase() ?? 'UNKNOWN';
-
         if (apiComponents.contains(component)) {
           if (status != "UP") apiStatusUp = false;
         }
-
         if (dbComponents.contains(component)) {
           if (status != "UP") dbStatusUp = false;
         }
       }
       final healthDetails =
       await AuthData.getDomainHealth(domainUrlInfo);
-
       if (portalServices != null) {
         for (var portal in portalServices) {
           if (portal["name"] == serviceName) {
@@ -515,11 +413,9 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
           }
         }
       }
-
       setState(() {});
     }
   }
-
   Future<void> callAltertsStatus(
       String domainUrl,
       String serviceName,
@@ -532,7 +428,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
     } else if (enviorment == "Live") {
       portalServices = serviceStatusLive["Alerts_Live"];
     }
-
     if (portalServices != null) {
       for (var portal in portalServices) {
         if (portal["name"] == serviceName) {
@@ -542,7 +437,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
       }
       setState(() {});
     }
-
     final domainStatusList = await AuthData.getAlerts(domainUrl, duration, enviorment);
     final dataList = domainStatusList?["data"];
     if (dataList is List && dataList.isNotEmpty) {
@@ -550,8 +444,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
       final status = item['Whatsapp-Service-Status']?.toString().toUpperCase() ?? "UNKNOWN";
       bool serviceUp = status == "OK";
       print("Service is up? $serviceUp");
-
-
       if (portalServices != null) {
         for (var portal in portalServices) {
           if (portal["name"] == serviceName) {
@@ -566,19 +458,14 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
     }
   }
 
-  final List<String> timerOptions = ['15min', '1hour', '24hours', '48hours'];
+  final List<String> timerOptions = ['15min', '1hours', '24hours', '48hours'];
   String selectedTimer = '15min';
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
     final serviceStatus = isLive ? serviceStatusLive : serviceStatusStaging;
     final liveHasIssue = hasDownService(serviceStatusLive);
     final stagingHasIssue = hasDownService(serviceStatusStaging);
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -609,8 +496,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
             ),
           ),
         ),
-
-
         actions: [
           Row(
             children: [
@@ -720,69 +605,16 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     child: Row(
                       children: [
-                        // Dropdown (always visible)
-                   /*     Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: selectedTimer,
-                              items: timerOptions.map((option) {
-                                return DropdownMenuItem(
-                                  value: option,
-                                  child: Text(
-                                    option,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (val) async {
-                                if (val != null) {
-                                  setState(() {
-                                    selectedTimer = val;
-                                  });
-                                  // Hi
-                                  if (isLive) {
-                                    callAllDBHealthStatuses_live();
-                                    CallDomainStatus_live();
-                                    CallDomainStatus_live();
-                                     CallApiHealthStatus_live();
-                                    CallAlertsStatus_live();
-                                    // fetchOneLinkAllStatuses();
-
-                                  } else {
-                                    callAllDBHealthStatuses_staging();
-                                    CallDomainStatus_staging();
-                                    CallApiHealthStatus_Staging();
-                                    CallAlertsStatus_Staging();
-                                  }
-                                }
-                              },
-                              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-                              style: const TextStyle(color: Colors.black, fontSize: 14),
-                              dropdownColor: const Color(0xFF004080),
-                            ),
-                          ),
-                        ),*/
-
                         const SizedBox(width: 8),
-
-                        // Only show buttons if live environment
                         if (isLive) ...[
-                          // 1Link Inquiry Button
                           TextButton(
                             onPressed: () async {
                               setState(() {
                                 isOneLinkLoading = true; // show loader
                               });
-
                               try {
                                 final data = await AuthData.fetchOneLinkInquiryHealth(
                                     AuthData.OnelinkInquiryAPiLink, selectedTimer);
-
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -800,7 +632,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                 );
                               } finally {
                                 setState(() {
-                                  isOneLinkLoading = false; // hide loader
+                                  isOneLinkLoading = false;
                                 });
                               }
                             },
@@ -820,18 +652,15 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                               ),
                             ),
     ),
-
                           const SizedBox(width: 8),
                           TextButton(
                             onPressed: () async {
                               setState(() {
                                 isOneLinkLoading = true; // show loader
                               });
-
                               try {
                                 final data = await AuthData.fetchOneLinkPaymentHealth(
                                     AuthData.OnelinkPaymentAPiLink, selectedTimer);
-
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -874,9 +703,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                     ),
                   ),
                 ),
-
-
-
                 SliverPadding(
                   padding: const EdgeInsets.all(8),
                   sliver: SliverList(
@@ -938,7 +764,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                 ],
                               ),
                             ),
-
                             GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -957,10 +782,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                   final isLoading = service['loading'] == true;
                                   final dbUp = dbStatus == 'up' || dbStatus == '1';
                                   final apiUp = apiStatus == 'up' || dbStatus == '1';
-
-
                                   final details = service['details'];
-
                                   Widget card =Card(
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
@@ -1003,7 +825,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                                     const SizedBox(width: 4),
                                                     Icon(Icons.storage_rounded, size: 20, color: Colors.green),
                                                   ],
-
                                                 if (!apiUp && dbUp)...[
                                                   Icon(Icons.cloud_off, size: 20, color: Colors.red),
                                                   const SizedBox(width: 4),
@@ -1014,7 +835,6 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                                   const SizedBox(width: 4),
                                                   Icon(Icons.storage_rounded, size: 20, color: Colors.red),
                                                 ],
-
                                                 if (!apiUp && !dbUp) ...[
                                                   Icon(Icons.cloud_off, size: 20, color: Colors.red),
                                                   const SizedBox(width: 4),
@@ -1047,7 +867,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                         context: context,
                                         builder: (context) {
                                           return Dialog(
-                                            backgroundColor: Colors.transparent, // important for gradient
+                                            backgroundColor: Colors.transparent,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(16),
                                             ),
@@ -1058,9 +878,9 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                                   begin: Alignment.topLeft,
                                                   end: Alignment.bottomRight,
                                                   colors: [
-                                                    Color(0xFF003366), // deep blue
-                                                    Color(0xFF0055AA), // medium blue
-                                                    Color(0xFF6699FF), // light blue
+                                                    Color(0xFF003366),
+                                                    Color(0xFF0055AA),
+                                                    Color(0xFF6699FF),
                                                   ],
                                                 ),
                                               ),
@@ -1071,7 +891,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     mainAxisSize: MainAxisSize.min,
                                                     children: [
-                                                      /// Title Row
+
                                                       Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
@@ -1246,7 +1066,7 @@ class _BlinqPulseHomeState extends State<BlinqPulseHome>  {
                 color: Colors.black54, // semi-transparent overlay
                 child: const Center(
                   child: CircularProgressIndicator(
-                    color: Colors.orange,
+                    color: Colors.red,
                   ),
                 ),
               ),

@@ -1,35 +1,37 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // ✅ import Firebase
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'App Data/NetworkConectivity_checker.dart';
-import 'FireBase/PushNotification.dart';
-import 'OneLink/OneLinkInquiryUI.dart';
-import 'OneLink/OnelinkPaymentUI.dart';
-import 'Spam/spamfile.dart';
+import 'FireBase/AccessFireBaseToken.dart';
 import 'SplashScreen/splashScreen.dart';
 import 'DashBoard/dashBoard.dart';
+import 'OneLink/OneLinkInquiryUI.dart';
+import 'OneLink/OnelinkPaymentUI.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'firebase_options.dart'; // only if using FlutterFire CLI
+import 'FireBase/PushNotification.dart';
+import 'App Data/NetworkConectivity_checker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  try {
 
+    await Firebase.initializeApp();
+    final FirebaseApi firebaseApi = FirebaseApi();
+    await firebaseApi.initNotifications();
+     print("✅ Firebase initialized successfully");
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
-  await Firebase.initializeApp();
-  final FirebaseApi firebaseApi = FirebaseApi();
-  await firebaseApi.initNotifications();
-  DependencyInjection.init();
-  debugPaintSizeEnabled = false;
-  debugPaintPointersEnabled = false;
-  debugPaintBaselinesEnabled = false;
+    DependencyInjection.init();
+    print("✅ Dependencies initialized successfully");
+  } catch (e, stack) {
+    print("❌ Initialization error: $e");
+    print(stack);
+  }
+
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => BlinqPulseSplashScreen(),
+        '/': (context) =>  BlinqPulseSplashScreen(),
         '/dashboard': (context) => BlinqPulseHome(),
         '/OnelinkInquiryscreen': (context) => OneLinkInquiryUI(
           oneLinkData: [],

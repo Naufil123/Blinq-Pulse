@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'AccessFireBaseToken.dart';
+import 'AccessFireBaseToken.dart';
 
 class FirebaseApi {
   final _firebaseMessaging = FirebaseMessaging.instance;

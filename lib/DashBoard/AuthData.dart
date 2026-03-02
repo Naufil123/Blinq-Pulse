@@ -2,6 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import  'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'dart:io';
+
+import '../FireBase/PushNotification.dart';
+
 
 class AuthData{
   static const String siteUrl = "https://pulseapi.blinq.pk/api/blinq/health";
@@ -10,6 +15,7 @@ class AuthData{
   static const String OnelinkInquiryAPiLink='https://pulseapi.blinq.pk/api/blinq/health/onelink-inquiry';
   static const String OnelinkPaymentAPiLink='https://pulseapi.blinq.pk/api/blinq/health/onelink-payment';
   static const  timer = 150;
+  String? fcmToken;
 
 // ########################################### Api Keys ##################################
   static const String apiKeyStaging = "S905TAcU9bD29e48rnCJAsQpwQAqBnZd52OhDZt3BBIvQQQq2j5Uv0wXhstzWfno4jugilAOMXZy2dOzcMlCxw7oU2qAgSZP+G6N3AxD3Lw=";
@@ -281,8 +287,109 @@ class AuthData{
     }
   }
 
+   static Future<Map<String, dynamic>> getDeviceInfo() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
+      return {
+        "device_name": androidInfo.model,
+        "device_type": androidInfo.brand,
+        "device_os": androidInfo.version.release,
+        "device_serial_number": androidInfo.id,
+      };
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
 
+      return {
+        "device_name": iosInfo.name,
+        "device_type": iosInfo.model,
+        "device_os": iosInfo.systemVersion,
+        "device_serial_number": iosInfo.identifierForVendor,
+      };
+    }
+
+    return {};
+  }
+
+  static Future<Map<String, dynamic>?> registerDevice({
+    required String username,
+    required String secretPin,
+  }) async {
+    try {
+      final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      Map<String, dynamic> deviceData = {};
+
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        deviceData = {
+          "device_name": androidInfo.model,
+          "device_type": androidInfo.brand,
+          "device_os": androidInfo.version.release,
+          "device_serial_number": androidInfo.id,
+        };
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        deviceData = {
+          "device_name": iosInfo.name,
+          "device_type": iosInfo.model,
+          "device_os": iosInfo.systemVersion,
+          "device_serial_number": iosInfo.identifierForVendor,
+        };
+      }
+
+      final fcmToken = await FirebaseApi().initNotifications();
+      if (fcmToken == null) {
+        print("FCM Token is null");
+        return null;
+      }
+
+      final url = Uri.parse(
+          'https://staging-mobileapi.blinq.pk/api/v2/mobile/pulse/user-device/firebase-id/insert');
+      final headers = {
+        'api_key': apiKeyStaging,
+        'Content-Type': 'application/json',
+      };
+
+      final body = {
+        "mobile_device_id": fcmToken,
+        "device_name": deviceData["device_name"],
+        "device_type": deviceData["device_type"],
+        "device_os": deviceData["device_os"],
+        "device_serial_number": deviceData["device_serial_number"],
+        "username": username,
+        "secret_pin": secretPin,
+      };
+
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body) as Map<String, dynamic>;
+        return responseBody;
+      } else {
+        print("HTTP error: ${response.statusCode}");
+        print(response.body);
+        return null;
+      }
+    } catch (e) {
+      print("API Error: $e");
+      return null;
+    }
+  }
+
+  // example getDeviceInfo
+ /* static Future<Map<String, dynamic>> getDeviceInfo() async {
+    return {
+      "device_name": "emulator",
+      "device_type": "Google sdk_gphone64_x86_64",
+      "device_os": "14",
+      "device_serial_number": "ABCDEFGH",
+    };
+  }*/
 }
 
